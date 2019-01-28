@@ -17,6 +17,7 @@ import bpy
 
 def just_delete():   # check what is selected and start the corresponding function
     
+    selection = len([bpy.context.active_object.data.vertices])
     select_mode = bpy.context.object.mode
     
     if select_mode == "OBJECT":
@@ -29,11 +30,15 @@ def just_delete():   # check what is selected and start the corresponding functi
     
             if sel_mode[2] == True:                     # if polygon selection mode is on
                 bpy.ops.mesh.delete(type='FACE')
+                if (selection != [bpy.context.active_object.data.vertices]): return
+
    
             if sel_mode[1] == True:                     # if edge selection mode is on
                 bpy.ops.mesh.dissolve_edges()
                 bpy.ops.mesh.delete(type='EDGE')
-        
+                if (selection != [bpy.context.active_object.data.vertices]): return
+
+            
             if sel_mode[0] == True:                     # if vertex selection mode is on
                 bpy.ops.mesh.dissolve_verts()
                 bpy.ops.mesh.delete(type='VERT')
