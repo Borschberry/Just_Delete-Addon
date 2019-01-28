@@ -14,10 +14,18 @@ bl_info = {
 
 import bpy
 
-
+def is_updated(cur_sel):
+        bpy.context.active_object.update_from_editmode()
+        if cur_sel == len([v for v in bpy.context.active_object.data.vertices if v.select]):
+            return False
+        else:
+            return True
+        
+        
 def just_delete():   # check what is selected and start the corresponding function
+    bpy.context.active_object.update_from_editmode()
     
-    selection = len([bpy.context.active_object.data.vertices])
+    cur_sel = len([v for v in bpy.context.active_object.data.vertices if v.select])
     select_mode = bpy.context.object.mode
     
     if select_mode == "OBJECT":
@@ -30,15 +38,14 @@ def just_delete():   # check what is selected and start the corresponding functi
     
             if sel_mode[2] == True:                     # if polygon selection mode is on
                 bpy.ops.mesh.delete(type='FACE')
-                if (selection != [bpy.context.active_object.data.vertices]): return
 
-   
             if sel_mode[1] == True:                     # if edge selection mode is on
                 bpy.ops.mesh.dissolve_edges()
                 bpy.ops.mesh.delete(type='EDGE')
-                if (selection != [bpy.context.active_object.data.vertices]): return
+                if is_updated(cur_sel) :
+                    bpy.ops.mesh.select_all(action='DESELECT')
+                    return
 
-            
             if sel_mode[0] == True:                     # if vertex selection mode is on
                 bpy.ops.mesh.dissolve_verts()
                 bpy.ops.mesh.delete(type='VERT')
